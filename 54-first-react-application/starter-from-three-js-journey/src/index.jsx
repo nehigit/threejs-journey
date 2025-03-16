@@ -6,6 +6,6 @@ const root = createRoot(document.querySelector('#root'))
 const debil = false
 
 root.render(
-    <App/>
+    <App />
 )
 
