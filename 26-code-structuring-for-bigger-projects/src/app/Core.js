@@ -1,52 +1,60 @@
 import * as THREE from 'three'
 
-import Sizes from "./utils/Sizes"
-import Time from "./utils/Time"
-import Camera from './Camera'
+import Sizes from './utils/Sizes.js'
+import Time from './utils/Time.js'
+import Camera from './Camera.js'
+import Renderer from './Renderer.js'
+import World from './world/World.js'
+import Debug from './utils/Debug.js'
+import sources from './utils/sources.js'
+import Resources from './utils/Resources.js'
+
 
 export default class Core {
-    static instance = null;
+    static instance = null
 
     constructor() {
-        if (Core.instance) {
-            throw new Error("Core is a singleton. Use Core.getInstance() instead.");
-        }
-        Core.instance = this;
+        if (Core.instance) throw new Error("Singleton. Use Core.getInstance().")
+        Core.instance = this
 
-        // Initialize the instance
-        this.canvas = document.querySelector('canvas.webgl');
-        this.sizes = new Sizes();
-        this.time = new Time();
-        this.scene = new THREE.Scene();
-        this.camera = new Camera();
+        this.canvas = document.querySelector('canvas.webgl')
+        this.sizes = new Sizes()
+        this.time = new Time()
+        this.scene = new THREE.Scene()
+        this.resources = new Resources(sources)
+        this.camera = new Camera()
+        this.renderer = new Renderer()
+        this.world = new World()
+        this.debug = new Debug()
 
         // Global access from console
-        window.core = this;
+        window.core = this
 
         // Listen to custom 'resize' event from Sizes
         this.sizes.addEventListener('myCustomResizeEvent', () => {
-            this.handleResize();
-        });
+            this.resize()
+        })
 
-        // Time tick event
+        // Listen to tick event
         this.time.addEventListener('tick', () => {
-            this.handleTickUpdate();
-        });
+            this.update()
+        })
     }
     
-    handleResize() {
-        console.log("A resize occurred. Sizes have been updated.");
-        console.log(this.sizes);
+    resize() {
+        this.camera.resize()
+        this.renderer.resize()
     }
-    
-    handleTickUpdate() {
-        console.log("xd");
+
+    update() {
+        // Order matters
+        this.camera.update()
+        this.world.update()
+        this.renderer.update()
     }
 
     static getInstance() {
-        if (!Core.instance) {
-            Core.instance = new Core();
-        }
-        return Core.instance;
+        if (!Core.instance) Core.instance = new Core()
+        return Core.instance
     }
 }

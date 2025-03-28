@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventDispatcher } from "three"
 
 export default class Time extends EventDispatcher {
 

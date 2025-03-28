@@ -1,7 +1,5 @@
 import Core from "./app/Core"
-import Time from "./app/utils/Time"
 
-// const core = new Core(document.querySelector('canvas.webgl'))
 const core = Core.getInstance()
 
 
