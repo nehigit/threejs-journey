@@ -2,6 +2,9 @@ import GUI from 'lil-gui'
 
 export default class Debug {
     constructor() {
-        this.gui = new GUI()
+        this.active = window.location.hash === '#debug'
+        if(this.active) {
+            this.gui = new GUI()
+        }
     }
 }

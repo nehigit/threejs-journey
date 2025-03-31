@@ -18,6 +18,7 @@ export default class Core {
         Core.instance = this
 
         this.canvas = document.querySelector('canvas.webgl')
+        this.debug = new Debug()
         this.sizes = new Sizes()
         this.time = new Time()
         this.scene = new THREE.Scene()
@@ -25,20 +26,16 @@ export default class Core {
         this.camera = new Camera()
         this.renderer = new Renderer()
         this.world = new World()
-        this.debug = new Debug()
 
         // Global access from console
         window.core = this
 
         // Listen to custom 'resize' event from Sizes
-        this.sizes.addEventListener('myCustomResizeEvent', () => {
-            this.resize()
-        })
+        this.onMyCustomResizeEvent = () => this.resize()
+        this.sizes.addEventListener('myCustomResizeEvent', this.onMyCustomResizeEvent)
 
-        // Listen to tick event
-        this.time.addEventListener('tick', () => {
-            this.update()
-        })
+        this.onTick = () => this.update()
+        this.time.addEventListener('tick', this.onTick)
     }
     
     resize() {
@@ -51,6 +48,37 @@ export default class Core {
         this.camera.update()
         this.world.update()
         this.renderer.update()
+    }
+
+    destroy() {
+        this.sizes.removeEventListener('myCustomResizeEvent', this.onMyCustomResizeEvent)
+        // The 'resize' event on window is still active
+        this.time.removeEventListener('tick', this.onTick)
+
+        this.scene.traverse(child => {
+            if(child instanceof THREE.Mesh) {
+                child.geometry.dispose()
+                for(const key in child.material) {
+                    const value = child.material(key)
+                    if(value && typeof value.dispose === 'function') {
+                        value.dispose()
+                    }
+                }
+            }
+        })
+
+        this.camera.orbitControls.dispose()
+        this.renderer.instance.dispose()
+        
+        if(this.debug.active) {
+            this.debug.gui.destroy()
+        }
+
+        // Destroying things is a bit tricky and you need to dive into the different components
+        // and make sure you are disposing of eveything properly
+
+        // For bigger projects it's better to create a destroy() method on every class,
+        // not only on this one
     }
 
     static getInstance() {
