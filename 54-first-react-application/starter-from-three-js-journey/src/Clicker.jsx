@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
 
-export default function Clicker({keyName, color}) {
+export default function Clicker({keyName, color, increment}) {
 
     const [count, setCount] = useState(parseInt(localStorage.getItem(keyName) ?? 0))
-
+    
     useEffect(() => {
         return () => localStorage.removeItem(keyName)
     }, [])
@@ -14,6 +14,9 @@ export default function Clicker({keyName, color}) {
     
     const buttonClick = () => {
         setCount(value => value + 1)
+        if(increment) {
+            increment()
+        }
     }
 
     return (
