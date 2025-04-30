@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react"
+import { useRef, useEffect, useMemo, useState } from "react"
 
 export default function Clicker({keyName, color, increment}) {
-
     const [count, setCount] = useState(parseInt(localStorage.getItem(keyName) ?? 0))
     
+    const buttonRef = useRef()
+
     useEffect(() => {
+        console.log(buttonRef.current)
+        buttonRef.current.style.backgroundColor = 'papayawhip'
+
         return () => localStorage.removeItem(keyName)
     }, [])
 
@@ -22,9 +26,9 @@ export default function Clicker({keyName, color, increment}) {
     return (
         <div>
             <div style={{color: color}}>
-                Clicks: {count}
+                Clicks: { count }
             </div>
-            <button onClick={buttonClick}>
+            <button ref={ buttonRef } onClick={ buttonClick }>
                 Click me!
             </button>
         </div>
