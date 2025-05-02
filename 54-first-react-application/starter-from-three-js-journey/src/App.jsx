@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react"
 import Clicker from "./Clicker.jsx"
+import People from "./People.jsx"
 
 export default function App({clickersCount, children}) {
     const [hasClicker, setHasClicker] = useState(true)
@@ -41,6 +42,7 @@ export default function App({clickersCount, children}) {
                     />
                 ) }
             </> : null }
+            <People/>
         </>
     )
     
